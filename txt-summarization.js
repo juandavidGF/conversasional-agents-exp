@@ -29,13 +29,16 @@ const documents = [
 ];
 
 async function main() {
-  console.log("== Extractive Summarization Sample ==");
+  console.log("== Abstractive Summarization Sample ==");
+
+	// AbstractiveSummarization
+	// ExtractiveSummarization
 
   const client = new TextAnalysisClient(endpoint, new AzureKeyCredential(apiKey));
   const actions = [
     {
-      kind: "ExtractiveSummarization",
-      maxSentenceCount: 2,
+      kind: "AbstractiveSummarization",
+      maxSentenceCount: 1,
     },
   ];
   const poller = await client.beginAnalyzeBatch(actions, documents, "en");
@@ -51,8 +54,8 @@ async function main() {
   const results = await poller.pollUntilDone();
 
   for await (const actionResult of results) {
-    if (actionResult.kind !== "ExtractiveSummarization") {
-      throw new Error(`Expected extractive summarization results but got: ${actionResult.kind}`);
+    if (actionResult.kind !== "AbstractiveSummarization") {
+      throw new Error(`Expected abstractive summarization results but got: ${actionResult.kind}`);
     }
     if (actionResult.error) {
       const { code, message } = actionResult.error;
@@ -75,8 +78,3 @@ main().catch((err) => {
 });
 
 module.exports = { main };
-
-`
-In this new world of Windows 365, remote workers flip the lid on their laptop, bootup the family workstation or clip a keyboard onto a tablet, launch a native app or modern web browser and login to their Windows 365 account.
-The ability to login to a Cloud PC from anywhere on any device is part of Microsoft’s larger strategy around tailoring products such as Microsoft Teams and Microsoft 365 for the post-pandemic hybrid workforce of the future, she added.
-`
