@@ -1,11 +1,11 @@
-// const http = require("https");
 const axios = require('axios');
 const fs = require('fs');
+const summary = require('./txt-summarization.js');
 require("dotenv").config();
+
 
 const API_KEY = process.env["WEB_SCRAPING_API_KEY"] || "YOUR_API_KEY";
 const TEST_MODE = true;
-
 
 class Page {
 	constructor(page) {
@@ -63,10 +63,26 @@ async function scrapHNs() {
 	await fs.writeFileSync('HNs.json', JSON.stringify(data_pages));
 };
 
+async function doSummary(data_pages_json) {
+
+	for(page of data_pages_json) {
+		const len = data_pages_json.length;
+		let data = [`title: ${data_pages_json[0].title[0]}, `.concat(data_pages_json[0].p)]
+	}
+	// const maxSentenceCount = 3;
+	// const result = await summary.main(data, maxSentenceCount);
+	// console.log('doSummary#result', result);
+}
 
 if(TEST_MODE) {
-	scrapHNs()
-
+	// scrapHNs()
+	const data_pages_json = JSON.parse(fs.readFileSync('HNs.json', 'utf8'));
+	// console.log('data -> concat: ', data);
+	//TODO
+	// save to DB
+	// Perform the summary -> AWS
+	// console.log('data -> summary: ', data);
+	doSummary(data_pages_json);
 } else if(!TEST_MODE) {
 	const extract_rules = [
 		{
