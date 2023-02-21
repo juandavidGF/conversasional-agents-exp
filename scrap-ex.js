@@ -15,9 +15,6 @@ class Page {
 
 async function scrapPage(page_url, extract_rules) {
 
-	console.log('scrapPage#page_url', page_url);
-	console.log('scrapPage#extract_rules', extract_rules);
-
 	const page_url_encoded = encodeURI(page_url);
 	const extract_rules_encoded = encodeURI(JSON.stringify(extract_rules));
 
@@ -30,43 +27,46 @@ async function scrapPage(page_url, extract_rules) {
 		"path": `/v1?url=${page_url_encoded}&api_key=${API_KEY}&device=desktop&proxy_type=datacenter&render_js=0&extract_rules=${extract_rules_encoded}`,
 		"headers": {}
 	};
-	console.log('options.path', options.path)
 
 	const res = await axios.get(hostname + options.path);
-	console.log('scrapPage#res', res.data);
+	// console.log('scrapPage#res', res.data);
 	return res.data;
 };
 
-async function scrapHNs(pages) {
-	// console.log('pages', pages);
+async function scrapHNs() {
+	const json = await JSON.parse(fs.readFileSync('scrap.json', 'utf8'));
+	const pages = json.title;
+
+	const extract_rules = {
+		"p": {
+			"selector": "p",
+			"output": "text",
+		}
+	}
+
 	let i = 0;
+	let data_pages = [];
 	for(chunk of pages) {
 		const { name, links } = chunk;
-		const data = [];
-		let p = '';
-		extract_rules = {
-			"title": {
-				"selector": "h1",
-				"output": {
-					"p": {
-						"selector": "p",
-						"output": "text"
-					}
-				},
-			}
+		console.log('scrapHNs#scraping: ', name[0],links[0]);
+		try {
+			p = await scrapPage(links[0], extract_rules);
+		} catch (error) {
+			console.log('scrapHNs#ERROR', error);
 		}
-		// await scrapPage(links[0], extract_rules);
-		p = await scrapPage(links[0], extract_rules);
-		// console.log('p', p);
-		i++;
-		if(i> 0) break;
+		p['title'] = name;
+		data_pages.push(p);
+		// i++;
+		// if(i > 20) break;
 	}
+	// console.log('data_pages', data_pages);
+	await fs.writeFileSync('HNs.json', JSON.stringify(data_pages));
 };
 
 
 if(TEST_MODE) {
-	const json = JSON.parse(fs.readFileSync('scrap.json', 'utf8'));
-	scrapHNs(json.title);
+	scrapHNs()
+
 } else if(!TEST_MODE) {
 	const extract_rules = [
 		{
