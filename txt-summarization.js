@@ -29,15 +29,12 @@ const documents = [
 ];
 
 async function main() {
-  console.log("== Abstractive Summarization Sample ==");
-
-	// AbstractiveSummarization
-	// ExtractiveSummarization
+  console.log("== Extractive Summarization Sample ==");
 
   const client = new TextAnalysisClient(endpoint, new AzureKeyCredential(apiKey));
   const actions = [
     {
-      kind: "AbstractiveSummarization",
+      kind: "ExtractiveSummarization",
       maxSentenceCount: 1,
     },
   ];
@@ -54,7 +51,7 @@ async function main() {
   const results = await poller.pollUntilDone();
 
   for await (const actionResult of results) {
-    if (actionResult.kind !== "AbstractiveSummarization") {
+    if (actionResult.kind !== "ExtractiveSummarization") {
       throw new Error(`Expected abstractive summarization results but got: ${actionResult.kind}`);
     }
     if (actionResult.error) {
