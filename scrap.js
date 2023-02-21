@@ -64,13 +64,17 @@ async function scrapHNs() {
 };
 
 async function doSummary(data_pages_json) {
-
+	const maxSentenceCount = 3;
+	let data = '';
+	let summary = [];
 	for(page of data_pages_json) {
-		const len = data_pages_json.length;
-		let data = [`title: ${data_pages_json[0].title[0]}, `.concat(data_pages_json[0].p)]
+		//TODO -> delete the compromised pages ...
+		data = [`title: ${page.title[0]}. page: `.concat(page.p)]
+		console.log(`sumarizing: ${page.title[0]}`)
+		const result = await summary.main(data, maxSentenceCount);
+		summary.push(result);
 	}
-	// const maxSentenceCount = 3;
-	// const result = await summary.main(data, maxSentenceCount);
+	console.log('doSummary#summary', summary);
 	// console.log('doSummary#result', result);
 }
 
