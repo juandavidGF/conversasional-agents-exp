@@ -34,7 +34,7 @@ async function scrapPage(page_url, extract_rules) {
 };
 
 async function scrapHNs() {
-	const json = await JSON.parse(fs.readFileSync('scrap.json', 'utf8'));
+	// const json = await JSON.parse(fs.readFileSync('scrap.json', 'utf8'));
 	const pages = json.title;
 
 	const extract_rules = {
